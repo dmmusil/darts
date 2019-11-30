@@ -19,7 +19,7 @@ namespace Darts.Players
             }
         }
 
-        public void Create(Username username, Password password, Email email)
+        public void Register(Username username, Password password, Email email)
         {
             ApplyEvent(new UserRegistered(username, password, email));
         }
@@ -42,6 +42,7 @@ namespace Darts.Players
     public class Username : ValueOf<string, Username>
     {
         public static implicit operator string(Username username) => username.Value;
+        public static implicit operator Username(string username) => From(username);
 
     }
 
@@ -79,5 +80,6 @@ namespace Darts.Players
         }
 
         public static implicit operator string(Email email) => email.Value;
+        public static implicit operator Email(string email) => From(email);
     }
 }
