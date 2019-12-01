@@ -13,7 +13,7 @@ namespace Darts.Api.Users
     {
         [FunctionName("Register")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users/register")] HttpRequest req,
             ILogger log)
         {
             var command = await req.ReadJsonBody<RegisterUser.Command>();
@@ -37,7 +37,7 @@ namespace Darts.Api.Users
 
         public class Handler
         {
-            public Task Handle(RegisterUser.Command command)
+            public Task Handle(Command command)
             {
                 var user = new Player();
                 user.Register(command.Username, command.Password, command.Email);

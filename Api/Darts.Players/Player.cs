@@ -76,7 +76,7 @@ namespace Darts.Players
     {
         protected override void Validate()
         {
-            new MailAddress(Value);
+            var _ = new MailAddress(Value);
         }
 
         public static implicit operator string(Email email) => email.Value;
