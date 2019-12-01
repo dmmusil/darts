@@ -1,0 +1,17 @@
+body{
+    margin: 0px;
+}
+
+.navbar {
+    height: 55px;
+    background: linear-gradient(127deg, rgb(122, 122, 235) 0%, rgb(219, 107, 219) 25%, rgb(243, 137, 137) 50%, rgb(238, 201, 132) 75%, rgb(248, 248, 148) 100%);
+}
+
+.navbar-brand{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 24px;
+    color: black;
+    display: flex;
+    justify-content: flex-start;
+}
+
