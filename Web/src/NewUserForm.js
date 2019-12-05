@@ -19,12 +19,25 @@ class NewUserForm extends Component {
         this.dismissError = this.dismissError.bind(this);
     }
 
-    dissmissError() {
+    dismissError() {
         this.setState({ error: '' });
     }
 
     handleSubmit(event) {
         event.preventDefault();
+
+        if (!this.state.username) {
+            return this.setState({ error: 'Username is required'});
+        }
+
+        if (!this.state.email) {
+            return this.setState({ error: 'Email is required' });
+        }
+
+        if (!this.state.password) {
+            return this.setState({ error: 'Password is required' });
+        }
+
         const data = new FormData(event.target);
         let jsonObject = {};
 
@@ -39,8 +52,27 @@ class NewUserForm extends Component {
         .then(json => {
             console.log(json)
             window.location.href = "/";
-        });
+        })
+        
+        return this.setState({ error: '' });
+    }
 
+    handleUserChange(event) {
+        this.setState({
+            username: event.target.value,
+        });
+    };
+
+    handleEmailChange(event) {
+        this.setState({
+            email: event.target.value,
+        });
+    };
+
+    handlePassChange(event) {
+        this.setState({
+            password: event.target.value,
+        });
     }
 
     render() {
@@ -51,14 +83,20 @@ class NewUserForm extends Component {
                 </div>
                 <div className="form">
                 <form onSubmit={this.handleSubmit}>
+                    {
+                        this.state.error &&
+                        <h3 data-test="error" onClick={this.dismisError}>
+                            <button onClick={this.dismissError}>* {this.state.error}</button>
+                        </h3>
+                    }
 
-                    <input id="username" name="username" type="text" placeholder="Username" htmlFor="password" />
+                    <input id="username" data-test="username" type="text" placeholder="Username" value={this.state.username} onChange={this.handleUserChange} />
 
-                    <input id="email" name="email" type="email" placeholder="Email" htmlFor="email" />
+                    <input id="email" data-test="email" type="email" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange} />
 
-                    <input id="password" name="password" type="password" placeholder="Password" htmlFor="password" />
+                    <input id="password" data-test="password" type="password" placeholder="Password" value={this.state.password} onChange={this.handlePassChange} />
 
-                    <button>Submit</button>
+                    <input id="submit" type="submit" value="Register" data-test="submit" />
                 </form>
                 </div>
             </div>

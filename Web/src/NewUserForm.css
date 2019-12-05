@@ -53,7 +53,16 @@
     background: black;
 }
 
-.form button {
+.form h3 button {
+    text-align: left;
+    color: red;
+    background: none;
+    padding-top: 0;
+    margin-top: 0;
+    border: none;
+}
+
+#submit {
     position: relative;
     width: 200px;
     padding: 10px;
