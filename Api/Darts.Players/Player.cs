@@ -1,5 +1,4 @@
 ﻿using Darts.Infrastructure;
-using System;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
@@ -65,18 +64,18 @@ namespace Darts.Players
 
     }
 
-    internal class PasswordComplexityException : Exception
+    internal class PasswordComplexityException : DomainException
     {
-        public PasswordComplexityException(string message) : base(message)
+        public PasswordComplexityException(string failureReason) : base(400, failureReason)
         {
-        }
+        } 
     }
 
     public class Email : ValueOf<string, Email>
     {
         protected override void Validate()
         {
-            new MailAddress(Value);
+            var _ = new MailAddress(Value);
         }
 
         public static implicit operator string(Email email) => email.Value;
