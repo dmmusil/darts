@@ -70,7 +70,8 @@ class Dartboard extends Component {
                 xpicpink,
                 xpicpinkx,
                 opicpink
-            ]
+            ],
+            increment: 0
         };
     }
 
@@ -81,7 +82,9 @@ class Dartboard extends Component {
                 currentImage20: (this.state.currentImage20 + 1) 
             })
         } else {
-            return null;
+            return this.setState({
+                increment: (this.state.increment + 20)
+            });
         }
         else if (id === 'button19')
         if (this.state.currentImage19 < 2) {
@@ -89,7 +92,9 @@ class Dartboard extends Component {
                 currentImage19: (this.state.currentImage19 + 1)
             })
         } else {
-            return null;
+            return this.setState({
+                increment: (this.state.increment + 19)
+            });
         }
         else if (id === 'button18')
         if (this.state.currentImage18 < 2) {
@@ -97,7 +102,9 @@ class Dartboard extends Component {
                 currentImage18: (this.state.currentImage18 + 1)
             })
         } else {
-            return null;
+            return this.setState({
+                increment: (this.state.increment + 18)
+            });
         }
         else if (id === 'button17')
         if (this.state.currentImage17 < 2) {
@@ -105,7 +112,9 @@ class Dartboard extends Component {
                 currentImage17: (this.state.currentImage17 + 1)
             })
         } else {
-            return null;
+            return this.setState({
+                increment: (this.state.increment + 17)
+            });
         }    
         else if (id === 'button16')
         if (this.state.currentImage16 < 2) {
@@ -113,7 +122,9 @@ class Dartboard extends Component {
                 currentImage16: (this.state.currentImage16 + 1)
             })
         } else {
-            return null;
+            return this.setState({
+                increment: (this.state.increment + 16)
+            });
         }    
         else if (id === 'button15')
         if (this.state.currentImage15 < 2) {
@@ -121,7 +132,9 @@ class Dartboard extends Component {
                 currentImage15: (this.state.currentImage15 + 1)
             })
         } else {
-            return null;
+            return this.setState({
+                increment: (this.state.increment + 15)
+            });
         }    
         else if (id === 'buttonBull')
         if (this.state.currentImageBull < 2) {
@@ -129,7 +142,9 @@ class Dartboard extends Component {
                 currentImageBull: (this.state.currentImageBull + 1)
             })
         } else { 
-            return null;
+            return this.setState({
+                increment: (this.state.increment + 25)
+            });
         }
     }
 
@@ -147,7 +162,7 @@ class Dartboard extends Component {
                 Player 2
                 </div>
                 <div className="twenty-c1">
-                    301
+                    {this.state.increment}
                 </div>
                 <div className="twenty-s1">
                     <img src={this.state.img20[this.state.currentImage20]} alt="" />
