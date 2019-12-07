@@ -12,9 +12,12 @@ namespace Darts.Infrastructure
             _events.Add(e);
             Apply(e);
         }
-        public Id Identifier { get; protected set; }
+        public string Identifier { get; protected set; }
         public IEnumerable<Event> UncommittedEvents => _events.AsReadOnly();
-        public int Version { get; private set; }
+        /// <summary>
+        /// ExpectedVersion.NoStream is -1 so it will trigger creation of a new stream
+        /// </summary>
+        public int Version { get; private set; } = -1; 
         public void Load(IEnumerable<Event> events)
         {
             foreach (var e in events)

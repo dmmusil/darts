@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Darts.Api", "Darts.Api\Darts.Api.csproj", "{421F8697-155C-4C96-AEAF-3EDEFB09E8E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Darts.Api", "Darts.Api\Darts.Api.csproj", "{421F8697-155C-4C96-AEAF-3EDEFB09E8E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Darts.Games", "Darts.Games\Darts.Games.csproj", "{704432B2-21E3-4EE6-A52E-308ADBBBEBC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Darts.Games", "Darts.Games\Darts.Games.csproj", "{704432B2-21E3-4EE6-A52E-308ADBBBEBC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Darts.Infrastructure", "Darts.Infrastructure\Darts.Infrastructure.csproj", "{066BF7AC-99C1-46EA-AD96-C9D4F0064C3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Darts.Infrastructure", "Darts.Infrastructure\Darts.Infrastructure.csproj", "{066BF7AC-99C1-46EA-AD96-C9D4F0064C3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Darts.Players", "Darts.Players\Darts.Players.csproj", "{EEA07737-8DB6-4633-98D8-ED18BD924E99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Darts.Players", "Darts.Players\Darts.Players.csproj", "{EEA07737-8DB6-4633-98D8-ED18BD924E99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
