@@ -18,16 +18,15 @@ namespace Darts.Infrastructure
         {
             var messages = new List<Event>();
 
-            ReadStreamPage page;
-            do
+            var page = await _store.ReadStreamForwards(new StreamId(id), StreamVersion.Start, 100);
+            while (true)
             {
-                page = await _store.ReadStreamForwards(new StreamId(id), StreamVersion.Start, 100);
                 messages.AddRange(await Task.WhenAll(page.Messages.Select(async m =>
                     (Event)JsonConvert.DeserializeObject(await m.GetJsonData(),
                         TypeMapper.GetClrTypeForMessageType(m.Type)))));
+                if (page.IsEnd) break;
                 page = await page.ReadNext();
             }
-            while (!page.IsEnd);
 
             if (!messages.Any())
             {

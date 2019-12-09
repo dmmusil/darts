@@ -6,6 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
+    <PackageReference Include="OneOf" Version="2.1.151" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Darts.Players\Darts.Players.csproj" />

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Darts.Infrastructure;
 using Darts.Players;
+using Darts.Api.Infrastructure;
 
 namespace Darts.Api.Users
 {
@@ -18,7 +19,7 @@ namespace Darts.Api.Users
         {
             var loginInfo = await req.ReadJsonBody<Authenticate.Request>();
 
-            var result = await CommandPipeline.Send(loginInfo);
+            var result = await CommandBus.Send(loginInfo);
 
             return result.ToActionResult();
         }

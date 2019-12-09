@@ -1,7 +1,6 @@
 ﻿using Darts.Infrastructure;
 using System;
 using System.Net.Mail;
-using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using ValueOf;
@@ -69,10 +68,12 @@ namespace Darts.Players
     {
         private static SecureUsername Hash(string plainText)
         {
-            using var sha256 = SHA256.Create();
-            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(plainText));
-            var hash = Convert.ToBase64String(hashBytes);
-            return From(hash);
+            using (var sha256 = SHA256.Create())
+            {
+                var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(plainText));
+                var hash = Convert.ToBase64String(hashBytes);
+                return From(hash);
+            }
         }
 
         public static implicit operator string(SecureUsername username) => username.Value;
@@ -89,9 +90,11 @@ namespace Darts.Players
                 throw new PasswordComplexityException("Passwords must be at least 6 characters in length.");
             }
 
-            using var sha256 = SHA256.Create();
-            var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(plainText));
-            return From(Convert.ToBase64String(hash));
+            using (var sha256 = SHA256.Create())
+            {
+                var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(plainText));
+                return From(Convert.ToBase64String(hash));
+            }
         }
 
         public static implicit operator Password(string password) => Hash(password);
