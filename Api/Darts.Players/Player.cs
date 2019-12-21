@@ -1,6 +1,7 @@
 ﻿using Darts.Infrastructure;
 using Darts.Players.Persistence;
 using Darts.Players.Persistence.SQL;
+using OneOf;
 using System;
 using System.Net.Mail;
 using System.Security.Cryptography;
@@ -15,17 +16,19 @@ namespace Darts.Players
         private Password Password { get; set; }
         private string PasswordHash { get; set; }
         private Username Username { get; set; }
+        private AuthToken AuthToken { get; set; }
 
         public void Register(Username username, Password password, Email email)
         {
             Email = email;
             Password = password;
             Username = username;
+            AuthToken = new AuthToken();
         }
 
-        public bool Authenticate(Password password)
+        public OneOf<AuthToken, bool> Authenticate(Password password)
         {
-            return password == PasswordHash;
+            return password == PasswordHash ? AuthToken : (OneOf<AuthToken, bool>)false;
         }
 
         public override void Load(PlayerState state)
@@ -34,11 +37,12 @@ namespace Darts.Players
             Email = state.Email;
             Username = state.Username;
             PasswordHash = state.Password;
+            AuthToken = state.AuthToken;
         }
 
         public override PlayerState Memoize()
         {
-            return new PlayerState(Id)
+            return new PlayerState(Id, AuthToken)
             {
                 Username = Username,
                 Email = Email,
@@ -47,7 +51,12 @@ namespace Darts.Players
         }
     }
 
-
+    public class AuthToken : ValueOf<Guid, AuthToken>
+    {
+        public static implicit operator string(AuthToken token) => token.Value.ToString("N");
+        public static implicit operator Guid(AuthToken token) => token.Value;
+        public static implicit operator AuthToken(Guid token) => From(token);
+    }
 
     public class Username : ValueOf<string, Username>
     {

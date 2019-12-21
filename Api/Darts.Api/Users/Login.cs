@@ -12,6 +12,8 @@ using System.Threading;
 using Darts.Players.Persistence;
 using OneOf;
 using Darts.Players.Persistence.SQL;
+using Microsoft.AspNetCore.Authentication;
+using System;
 
 namespace Darts.Api.Users
 {
@@ -34,7 +36,7 @@ namespace Darts.Api.Users
             var result = await _mediator.Send(loginInfo);
 
             return result.Match<IActionResult>(
-                success => new OkObjectResult(SecureUsername.From(loginInfo.Username)),
+                success => new OkObjectResult((string)success.AuthToken),
                 failure => new BadRequestObjectResult("Incorrect username or password.")
             );
         }
@@ -61,16 +63,23 @@ namespace Darts.Api.Users
             {
                 var user = await _repository.Load(x => x.Username == command.Username);
                 return user.Match(
-                    some => some.Authenticate(command.Password)
-                            ? new Success()
-                            : (OneOf<Success, Failure>)new Failure(),
+                    some => some.Authenticate(command.Password).Match<OneOf<Success, Failure>>(
+                            authToken => new Success(authToken),
+                            failed => (OneOf<Success, Failure>)new Failure()),
                     none => new Failure());
             }
         }
 
         public class Failure { }
 
-        public class Success { }
+        public class Success
+        {
+            public AuthToken AuthToken { get; }
+            public Success(AuthToken authToken)
+            {
+                AuthToken = authToken;
+            }
+        }
     }
 
 

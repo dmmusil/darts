@@ -4,14 +4,16 @@ using Darts.Players.Persistence.SQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Darts.Players.Persistence.SQL.Migrations
 {
     [DbContext(typeof(PlayersContext))]
-    partial class PlayersContextModelSnapshot : ModelSnapshot
+    [Migration("20191221191327_AddAuthToken")]
+    partial class AddAuthToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

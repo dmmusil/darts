@@ -87,22 +87,4 @@ namespace Darts.Infrastructure
         {
         }
     }
-
-    public class Maybe<T> where T : class
-    {
-        public T Value { get; }
-        public bool HasValue => Value != null;
-
-        private Maybe(T value)
-        {
-            Value = value;
-        }
-
-        public static Maybe<T> From(T value)
-        {
-            return new Maybe<T>(value);
-        }
-
-        public static Maybe<T> None => new Maybe<T>(null);
-    }
 }
