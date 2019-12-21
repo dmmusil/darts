@@ -1,4 +1,6 @@
 ﻿using Darts.Infrastructure;
+using Darts.Players.Persistence;
+using Darts.Players.Persistence.SQL;
 using System;
 using System.Net.Mail;
 using System.Security.Cryptography;
@@ -7,55 +9,45 @@ using ValueOf;
 
 namespace Darts.Players
 {
-    public class Player : Aggregate
+    public class Player : Aggregate<PlayerState>
     {
-        private string Password;
-
-        protected override void Apply(Event e)
-        {
-            switch (e)
-            {
-                case UserRegistered registered:
-                    Identifier = registered.Username;
-                    Password = registered.PasswordHash;
-                    break;
-            }
-        }
+        private Email Email { get; set; }
+        private Password Password { get; set; }
+        private string PasswordHash { get; set; }
+        private Username Username { get; set; }
 
         public void Register(Username username, Password password, Email email)
         {
-            ApplyEvent(new UserRegistered(username, password, email));
-        }
-
-        public void Authenticate(Password password)
-        {
-            if (password != Password)
-            {
-                throw new AuthenticationFailedException();
-            }
-        }
-    }
-
-    internal class AuthenticationFailedException : DomainException
-    {
-        public AuthenticationFailedException() : base(400, "Incorrect username or password")
-        {
-        }
-    }
-
-    public class UserRegistered : Event
-    {
-        public string Username { get; }
-        public string PasswordHash { get; }
-        public string Email { get; }
-
-        public UserRegistered(string username, string passwordHash, string email)
-        {
-            Username = username;
-            PasswordHash = passwordHash;
             Email = email;
+            Password = password;
+            Username = username;
+        }
+
+        public bool Authenticate(Password password)
+        {
+            return password == PasswordHash;
+        }
+
+        public override void Load(PlayerState state)
+        {
+            Id = state.Id;
+            Email = state.Email;
+            Username = state.Username;
+            PasswordHash = state.Password;
+        }
+
+        public override PlayerState Memoize()
+        {
+            return new PlayerState(Id)
+            {
+                Username = Username,
+                Email = Email,
+                Password = Password
+            };
         }
     }
+
+
 
     public class Username : ValueOf<string, Username>
     {
@@ -130,6 +122,13 @@ namespace Darts.Players
     internal class InvalidEmailException : DomainException
     {
         public InvalidEmailException() : base(400, "Invalid email address provided.")
+        {
+        }
+    }
+
+    public class PlayerRepository : EntityFrameworkRepository<Player, PlayerState, PlayersContext>
+    {
+        public PlayerRepository(PlayersContext dbContext) : base(dbContext)
         {
         }
     }

@@ -1,13 +1,8 @@
-﻿using Darts.Infrastructure;
-using System;
+﻿using System;
 
 namespace Darts.Games
 {
-    public class _301 : Aggregate
+    public class _301
     {
-        protected override void Apply(Event e)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -6,8 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Darts.Infrastructure\Darts.Infrastructure.csproj" />
-    <ProjectReference Include="..\Darts.Players.Persistence.SQL\Darts.Players.Persistence.SQL.csproj" />
-    <ProjectReference Include="..\Darts.Players.Persistence\Darts.Players.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

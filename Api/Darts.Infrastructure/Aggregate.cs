@@ -2,31 +2,21 @@
 
 namespace Darts.Infrastructure
 {
-    public abstract class Aggregate
+    public abstract class Aggregate<TState> where TState : State
     {
-        private readonly List<Event> _events = new List<Event>();
-        protected abstract void Apply(Event e);
-
-        protected void ApplyEvent(Event e)
-        {
-            _events.Add(e);
-            Apply(e);
-        }
-        public string Identifier { get; protected set; }
+        private List<Event> _events = new List<Event>();
         public IEnumerable<Event> UncommittedEvents => _events.AsReadOnly();
-        /// <summary>
-        /// ExpectedVersion.NoStream is -1 so it will trigger creation of a new stream
-        /// </summary>
-        public int Version { get; private set; } = -1; 
-        public void Load(IEnumerable<Event> events)
-        {
-            foreach (var e in events)
-            {
-                Apply(e);
-                Version++;
-            }
-        }
+
+        public int Id { get; protected set; }
 
 
+        public abstract void Load(TState state);
+
+        public abstract TState Memoize();
+    }
+
+    public abstract class State
+    {
+        public int Id { get; protected set; }
     }
 }

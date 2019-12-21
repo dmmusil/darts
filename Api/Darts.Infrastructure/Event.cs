@@ -6,9 +6,7 @@ namespace Darts.Infrastructure
     {
     }
 
-    public abstract class Command
-    {
-    }
+
 
     public class DomainException : Exception
     {

@@ -1,10 +1,10 @@
 ﻿using Darts.Api;
-using Darts.Api.Infrastructure;
-using Darts.Infrastructure;
-using Darts.Players;
+using MediatR;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using SqlStreamStore;
+using Microsoft.Extensions.DependencyInjection;
+using Darts.Players.Persistence.SQL;
+using Microsoft.EntityFrameworkCore;
+using Darts.Players;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -14,17 +14,9 @@ namespace Darts.Api
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            TypeMapper.RegisterMapping("UserRegistered", typeof(UserRegistered));
-
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("local.settings.json", true)
-                .AddEnvironmentVariables()
-                .Build();
-            var settings = new MsSqlStreamStoreSettings(config.GetConnectionString("Database"));
-            var store = new MsSqlStreamStore(settings);
-            store.CreateSchema().GetAwaiter().GetResult();
-
-            CommandBus.Initialize(store);
+            builder.Services.AddMediatR(typeof(Startup).Assembly);
+            builder.Services.AddDbContext<PlayersContext>(options => options.UseSqlServer("Data Source=.;Initial Catalog=Darts;Integrated Security=true"));
+            builder.Services.AddScoped<PlayerRepository>();
         }
     }
 }

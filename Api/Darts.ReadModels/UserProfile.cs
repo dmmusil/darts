@@ -9,7 +9,7 @@ namespace Darts.ReadModels
         public UserProfile(string email, string username)
         {
             Email = email;
-            Username= username;
+            Username = username;
         }
 
         public int UserProfileId { get; }
