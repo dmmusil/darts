@@ -13,7 +13,6 @@ namespace Darts.Players
     public class Player : Aggregate<PlayerState>
     {
         private Email Email { get; set; }
-        private Password Password { get; set; }
         private string PasswordHash { get; set; }
         private Username Username { get; set; }
         private AuthToken AuthToken { get; set; }
@@ -21,7 +20,7 @@ namespace Darts.Players
         public void Register(Username username, Password password, Email email)
         {
             Email = email;
-            Password = password;
+            PasswordHash = password;
             Username = username;
             AuthToken = new AuthToken();
         }
@@ -46,7 +45,7 @@ namespace Darts.Players
             {
                 Username = Username,
                 Email = Email,
-                Password = Password
+                Password = PasswordHash
             };
         }
     }
@@ -62,23 +61,6 @@ namespace Darts.Players
     {
         public static implicit operator string(Username username) => username.Value;
         public static implicit operator Username(string username) => From(username);
-
-    }
-
-    public class SecureUsername : ValueOf<string, SecureUsername>
-    {
-        private static SecureUsername Hash(string plainText)
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(plainText));
-                var hash = Convert.ToBase64String(hashBytes);
-                return From(hash);
-            }
-        }
-
-        public static implicit operator string(SecureUsername username) => username.Value;
-        public static implicit operator SecureUsername(string username) => Hash(username);
 
     }
 

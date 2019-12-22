@@ -1,11 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Darts.Games.Persistence\Darts.Games.Persistence.csproj" />
     <ProjectReference Include="..\Darts.Infrastructure\Darts.Infrastructure.csproj" />
   </ItemGroup>
 

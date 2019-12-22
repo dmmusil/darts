@@ -50,7 +50,7 @@ namespace Darts.Infrastructure
             {
                 await _dbContext.SaveChangesAsync();
             }
-            catch (Exception ex) when (ex?.InnerException is SqlException sql && (sql.Number == 2601 || sql.Number == 2627))
+            catch (Exception ex) when (ex.InnerException is SqlException sql && (sql.Number == 2601 || sql.Number == 2627))
             {
                 throw new UniqueConstraintViolationException();
             }

@@ -1,4 +1,4 @@
-﻿using Darts.Infrastructure;
+﻿using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -11,7 +11,7 @@ namespace Darts.Players.Persistence.SQL
         {
         }
 
-        public DbSet<PlayerState> Players { get; set; }
+        [UsedImplicitly] public DbSet<PlayerState> Players { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

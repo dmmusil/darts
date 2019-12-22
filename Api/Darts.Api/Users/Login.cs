@@ -4,16 +4,10 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Darts.Infrastructure;
 using Darts.Players;
 using Darts.Api.Infrastructure;
 using MediatR;
-using System.Threading;
-using Darts.Players.Persistence;
-using OneOf;
-using Darts.Players.Persistence.SQL;
-using Microsoft.AspNetCore.Authentication;
-using System;
+using JetBrains.Annotations;
 
 namespace Darts.Api.Users
 {
@@ -27,6 +21,7 @@ namespace Darts.Api.Users
         }
 
         [FunctionName("Login")]
+        [UsedImplicitly]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "login")] HttpRequest req,
             ILogger log)
@@ -41,46 +36,4 @@ namespace Darts.Api.Users
             );
         }
     }
-
-    public class Authenticate
-    {
-        public class Request : IRequest<OneOf<Success, Failure>>
-        {
-            public string Username { get; set; }
-            public string Password { get; set; }
-        }
-
-        public class Handler : IRequestHandler<Request, OneOf<Success, Failure>>
-        {
-            private readonly PlayerRepository _repository;
-
-            public Handler(PlayerRepository repository)
-            {
-                _repository = repository;
-            }
-
-            public async Task<OneOf<Success, Failure>> Handle(Request command, CancellationToken token)
-            {
-                var user = await _repository.Load(x => x.Username == command.Username);
-                return user.Match(
-                    some => some.Authenticate(command.Password).Match<OneOf<Success, Failure>>(
-                            authToken => new Success(authToken),
-                            failed => (OneOf<Success, Failure>)new Failure()),
-                    none => new Failure());
-            }
-        }
-
-        public class Failure { }
-
-        public class Success
-        {
-            public AuthToken AuthToken { get; }
-            public Success(AuthToken authToken)
-            {
-                AuthToken = authToken;
-            }
-        }
-    }
-
-
 }

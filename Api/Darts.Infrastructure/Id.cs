@@ -13,6 +13,7 @@ namespace Darts.Infrastructure
         protected override void Validate()
         {
             if (Value == Guid.Empty)
+                // ReSharper disable once NotResolvedInText
                 throw new ArgumentException(nameof(Value), "Cannot use Guid.Empty");
         }
 
