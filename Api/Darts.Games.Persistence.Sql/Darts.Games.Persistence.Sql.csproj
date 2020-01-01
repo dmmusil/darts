@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20191231164220_test.cs" />
+    <Compile Remove="Migrations\20191231164220_test.Designer.cs" />
+    <Compile Remove="Migrations\20191231164541_test.cs" />
+    <Compile Remove="Migrations\20191231164541_test.Designer.cs" />
+    <Compile Remove="Migrations\20191231164747_test.cs" />
+    <Compile Remove="Migrations\20191231164747_test.Designer.cs" />
+    <Compile Remove="Migrations\20191231203838_test.cs" />
+    <Compile Remove="Migrations\20191231203838_test.Designer.cs" />
+    <Compile Remove="Migrations\20191231204013_test.cs" />
+    <Compile Remove="Migrations\20191231204013_test.Designer.cs" />
+    <Compile Remove="Migrations\20191231204441_test.cs" />
+    <Compile Remove="Migrations\20191231204441_test.Designer.cs" />
+    <Compile Remove="Migrations\20191231204513_test.cs" />
+    <Compile Remove="Migrations\20191231204513_test.Designer.cs" />
+    <Compile Remove="Migrations\20191231204717_test.cs" />
+    <Compile Remove="Migrations\20191231204717_test.Designer.cs" />
+    <Compile Remove="Migrations\20191231205211_test.cs" />
+    <Compile Remove="Migrations\20191231205211_test.Designer.cs" />
+    <Compile Remove="Migrations\20191231205826_test.cs" />
+    <Compile Remove="Migrations\20191231205826_test.Designer.cs" />
+    <Compile Remove="Migrations\20200101144415_AddCricketTables.cs" />
+    <Compile Remove="Migrations\20200101144415_AddCricketTables.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Darts.Games.Persistence\Darts.Games.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>

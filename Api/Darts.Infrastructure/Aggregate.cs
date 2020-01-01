@@ -17,6 +17,11 @@ namespace Darts.Infrastructure
 
     public abstract class State
     {
-        public int Id { get; protected set; }
+        protected State(int id)
+        {
+            Id = id;
+        }
+
+        public int Id { get; private set; }
     }
 }

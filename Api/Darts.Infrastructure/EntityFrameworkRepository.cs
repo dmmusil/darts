@@ -5,6 +5,7 @@ using System;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using OneOf.Types;
 
 namespace Darts.Infrastructure
 {
@@ -73,17 +74,6 @@ namespace Darts.Infrastructure
         }
 
         protected UniqueConstraintViolationException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-    }
-
-    public class None
-    {
-    }
-
-    public class MessageTypeNotRegisteredException : Exception
-    {
-        public MessageTypeNotRegisteredException(string typeName) : base($"{typeName} is not registered.")
         {
         }
     }

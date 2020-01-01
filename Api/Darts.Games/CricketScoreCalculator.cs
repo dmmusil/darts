@@ -25,11 +25,15 @@ namespace Darts.Games
             }
         }
 
-        public bool GameStarted;
+        public bool GameStarted => _turns.Any();
+        private readonly List<Turn> _turns = new List<Turn>();
+        public IEnumerable<Turn> Turns => _turns;
+        public IEnumerable<PlayerId> Players => _playerScores.Keys;
 
         public void AddTurn(Turn turn)
         {
             CheckForDartsThatDontCount(turn);
+            _turns.Add(turn);
         }
 
         private void CheckForDartsThatDontCount(Turn turn)

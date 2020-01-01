@@ -7,9 +7,8 @@ namespace Darts.Players.Persistence
 {
     public class PlayerState : State
     {
-        public PlayerState(int id, Guid authToken)
+        public PlayerState(int id, Guid authToken) : base(id)
         {
-            Id = id;
             AuthToken = authToken;
         }
 

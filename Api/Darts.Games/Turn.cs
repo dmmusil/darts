@@ -5,6 +5,7 @@ namespace Darts.Games
 {
     public class Turn
     {
+        public int TurnId { get; private set; }
         public PlayerId PlayerId { get; }
         private Turn(PlayerId playerId)
         {
@@ -31,6 +32,11 @@ namespace Darts.Games
         public static Turn ForPlayer(PlayerId playerId)
         {
             return new Turn(playerId);
+        }
+
+        public void WithId(in int turnId)
+        {
+            TurnId = turnId;
         }
     }
 }
