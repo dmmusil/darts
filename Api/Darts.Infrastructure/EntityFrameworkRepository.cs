@@ -9,10 +9,10 @@ using OneOf.Types;
 
 namespace Darts.Infrastructure
 {
-    public class EntityFrameworkRepository<TAggregate, TState, TContext> 
+    public abstract class EntityFrameworkRepository<TAggregate, TState, TContext>
         where TAggregate : Aggregate<TState>, new()
-        where TState: State 
-        where TContext:DbContext
+        where TState : State
+        where TContext : DbContext
     {
         private readonly TContext _dbContext;
 
@@ -37,19 +37,28 @@ namespace Darts.Infrastructure
             return aggregate;
         }
 
-        public async Task<OneOf<TAggregate, None>> Load(Expression<Func<TState, bool>> selector)
+        protected abstract Task<TState> LoadWithIncludes(
+            Expression<Func<TState, bool>> selector);
+
+        public async Task<OneOf<TAggregate, None>> Load(
+            Expression<Func<TState, bool>> selector)
         {
-            var result = await _dbContext.Set<TState>().SingleOrDefaultAsync(selector);
+            var result = await LoadWithIncludes(selector);
+
             return LoadAggregateFromState(result);
         }
 
-        public async Task Save(Aggregate<TState> updated)
+        public async Task<TState> Save(Aggregate<TState> updated)
         {
-            _dbContext.Attach(updated.Memoize());
-
+            updated.State.Handle(updated.UncommittedEvents);
+            if (updated.State.Id == default)
+            {
+                _dbContext.Set<TState>().Add(updated.State);
+            }
             try
             {
                 await _dbContext.SaveChangesAsync();
+                return updated.State;
             }
             catch (Exception ex) when (ex.InnerException is SqlException sql && (sql.Number == 2601 || sql.Number == 2627))
             {

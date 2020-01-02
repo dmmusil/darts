@@ -5,8 +5,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Darts.Games.Persistence\Darts.Games.Persistence.csproj" />
+    <Compile Remove="Migrations\20200102144644_CricketTables.cs" />
+    <Compile Remove="Migrations\20200102144644_CricketTables.Designer.cs" />
+    <Compile Remove="Persistence\Migrations\20200101184618_AddCricketTables.cs" />
+    <Compile Remove="Persistence\Migrations\20200101184618_AddCricketTables.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
+    <PackageReference Include="MediatR" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Darts.Infrastructure\Darts.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 
 </Project>

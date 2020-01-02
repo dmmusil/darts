@@ -3,9 +3,12 @@ using Darts.Players.Persistence;
 using Darts.Players.Persistence.SQL;
 using OneOf;
 using System;
+using System.Linq.Expressions;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ValueOf;
 
 namespace Darts.Players
@@ -30,23 +33,18 @@ namespace Darts.Players
             return password == PasswordHash ? AuthToken : (OneOf<AuthToken, bool>)false;
         }
 
-        public override void Load(PlayerState state)
+        protected override void ApplyEvent(Event e)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void LoadInternal(PlayerState state)
         {
             Id = state.Id;
             Email = state.Email;
             Username = state.Username;
             PasswordHash = state.Password;
             AuthToken = state.AuthToken;
-        }
-
-        public override PlayerState Memoize()
-        {
-            return new PlayerState(Id, AuthToken)
-            {
-                Username = Username,
-                Email = Email,
-                Password = PasswordHash
-            };
         }
     }
 
@@ -119,8 +117,16 @@ namespace Darts.Players
 
     public class PlayerRepository : EntityFrameworkRepository<Player, PlayerState, PlayersContext>
     {
+        private readonly PlayersContext DbContext;
+
         public PlayerRepository(PlayersContext dbContext) : base(dbContext)
         {
+            DbContext = dbContext;
+        }
+
+        protected override Task<PlayerState> LoadWithIncludes(Expression<Func<PlayerState, bool>> selector)
+        {
+            return DbContext.Players.SingleOrDefaultAsync(selector);
         }
     }
 }

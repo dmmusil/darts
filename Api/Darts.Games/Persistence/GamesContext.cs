@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Darts.Games.Persistence.Sql
+namespace Darts.Games.Persistence
 {
     public class GamesContext : DbContext
     {
@@ -70,13 +70,17 @@ namespace Darts.Games.Persistence.Sql
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).HasColumnName("TurnId");
 
-            builder.HasOne(x => x.Player)
-                .WithMany()
-                .HasForeignKey(x => x.PlayerId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasIndex(x => new { x.PlayerId, x.GameId, x.Order });
         }
     }
 
+    public class PlayerMap : IEntityTypeConfiguration<Player>
+    {
+        public void Configure(EntityTypeBuilder<Player> builder)
+        {
+            builder.ToTable("CricketPlayer");
+            builder.HasKey(x => new {x.PlayerId, x.GameId});
+            builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
+        }
+    }
 }

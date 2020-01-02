@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Darts.Games.Persistence.Sql.Migrations
+namespace Darts.Games.Migrations
 {
-    public partial class AddCricketTables : Migration
+    public partial class CricketTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,17 +20,18 @@ namespace Darts.Games.Persistence.Sql.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Player",
+                name: "CricketPlayer",
                 columns: table => new
                 {
                     PlayerId = table.Column<Guid>(nullable: false),
-                    GameId = table.Column<int>(nullable: false)
+                    GameId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Player", x => x.PlayerId);
+                    table.PrimaryKey("PK_CricketPlayer", x => new { x.PlayerId, x.GameId });
                     table.ForeignKey(
-                        name: "FK_Player_CricketGames_GameId",
+                        name: "FK_CricketPlayer_CricketGames_GameId",
                         column: x => x.GameId,
                         principalTable: "CricketGames",
                         principalColumn: "GameId",
@@ -56,12 +57,6 @@ namespace Darts.Games.Persistence.Sql.Migrations
                         principalTable: "CricketGames",
                         principalColumn: "GameId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Turn_Player_PlayerId",
-                        column: x => x.PlayerId,
-                        principalTable: "Player",
-                        principalColumn: "PlayerId",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,8 +79,8 @@ namespace Darts.Games.Persistence.Sql.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Player_GameId",
-                table: "Player",
+                name: "IX_CricketPlayer_GameId",
+                table: "CricketPlayer",
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
@@ -108,13 +103,13 @@ namespace Darts.Games.Persistence.Sql.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "CricketPlayer");
+
+            migrationBuilder.DropTable(
                 name: "Score");
 
             migrationBuilder.DropTable(
                 name: "Turn");
-
-            migrationBuilder.DropTable(
-                name: "Player");
 
             migrationBuilder.DropTable(
                 name: "CricketGames");

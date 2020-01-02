@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Darts.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -16,6 +17,10 @@ namespace Darts.Players.Persistence
         public string Email { get; set; }
         public string Password { get; set; }
         public Guid AuthToken { get; }
+        public override void Handle(IEnumerable<Event> events)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class PlayerStateMap : IEntityTypeConfiguration<PlayerState>

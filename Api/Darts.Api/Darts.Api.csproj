@@ -8,9 +8,11 @@
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.2" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Darts.Games\Darts.Games.csproj" />
     <ProjectReference Include="..\Darts.Players.Persistence.SQL\Darts.Players.Persistence.SQL.csproj" />
     <ProjectReference Include="..\Darts.Players\Darts.Players.csproj" />
   </ItemGroup>
