@@ -85,7 +85,7 @@ namespace Darts.Players
 
     internal class PasswordComplexityException : DomainException
     {
-        public PasswordComplexityException(string failureReason) : base(400, failureReason)
+        public PasswordComplexityException(string failureReason) : base(failureReason)
         {
         }
     }
@@ -110,7 +110,7 @@ namespace Darts.Players
 
     internal class InvalidEmailException : DomainException
     {
-        public InvalidEmailException() : base(400, "Invalid email address provided.")
+        public InvalidEmailException() : base("Invalid email address provided.")
         {
         }
     }

@@ -24,13 +24,13 @@ namespace Darts.Api.Cricket
         [FunctionName("AddCricketTurn")]
         [UsedImplicitly]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "cricket/add-turn")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "cricket/{gameId}/turns")] HttpRequest req,
+            int gameId,
             ILogger log)
         {
             var json = await req.ReadAsStringAsync();
 
-            var command = new AddCricketTurn.Command(Turn.FromJson(json),
-                int.Parse(JObject.Parse(json)["gameId"].ToString()));
+            var command = new AddCricketTurn.Command(Turn.FromJson(json), gameId);
 
             var result = await Mediator.Send(command);
 

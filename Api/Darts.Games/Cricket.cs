@@ -31,7 +31,6 @@ namespace Darts.Games
         {
             if (!Started)
             {
-                //_calculator.AddPlayer(player);
                 Apply(new PlayerAdded(player));
             }
         }
@@ -40,7 +39,6 @@ namespace Darts.Games
         {
             if (!Completed)
             {
-                //_calculator.AddTurn(turn);
                 Apply(new TurnAdded(turn));
             }
         }
@@ -84,31 +82,6 @@ namespace Darts.Games
                 AddTurn(loading);
             }
         }
-
-        //public override CricketState Memoize()
-        //{
-        //    var state = new CricketState(Id);
-        //    foreach (var player in _calculator.Players)
-        //    {
-        //        state.Players.Add(new Player { PlayerId = player.Value });
-        //    }
-
-        //    foreach (var turn in _calculator.Turns)
-        //    {
-        //        var item = new Persistence.Turn(turn.TurnId)
-        //        {
-        //            PlayerId = turn.PlayerId.Value,
-        //            Order = state.Turns.Count(t => t.PlayerId == turn.PlayerId.Value) + 1
-        //        };
-        //        foreach (var (segment, count) in turn.Scores)
-        //        {
-        //            item.Scores.Add(new Score { Count = count.Value, Segment = segment.Value, });
-        //        }
-        //        state.Turns.Add(item);
-        //    }
-
-        //    return state;
-        //}
     }
 
     public class GameCreated : Event
