@@ -12,34 +12,28 @@ using Microsoft.Extensions.Logging;
 namespace Darts.Api.Cricket
 {
     [UsedImplicitly]
-    public class GetScore
+    public class GetGame
     {
         private readonly GamesContext Db;
 
-        public GetScore(GamesContext db)
+        public GetGame(GamesContext db)
         {
             Db = db;
         }
 
-        [FunctionName("GetScore")]
+        [FunctionName("GetGame")]
         [UsedImplicitly]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "cricket/{id}/score")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "cricket/{id}")] HttpRequest req,
             int id,
             ILogger log)
         {
-            var playerTurns = await Db.CricketGames
+            var gameInfo = await Db.CricketGames
                 .Where(g => g.Id == id)
-                .SelectMany(g => g.Turns)
-                .Include(t => t.Scores)
-                .Select(t => new
-                {
-                    Scores = t.Scores.Select(s => new { s.Segment, s.Count }),
-                    t.PlayerId,
-                    t.Order
-                })
-                .ToListAsync();
-            return new OkObjectResult(playerTurns);
+                .Select(g => new { Players = g.Players.Select(p => p.PlayerId) })
+                .SingleOrDefaultAsync();
+
+            return new OkObjectResult(gameInfo);
         }
     }
 }
