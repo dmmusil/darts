@@ -80,7 +80,7 @@ namespace Darts.Games.Persistence
         {
             builder.ToTable("CricketPlayer");
             builder.HasKey(x => new {x.PlayerId, x.GameId});
-            builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
+            builder.Property(x => x.Name).HasMaxLength(100);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Darts.Api.Infrastructure;
 using Darts.Games;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Darts.Api.Cricket
 {
+    [UsedImplicitly]
     public class AddPlayer
     {
         private readonly IMediator Mediator;
@@ -20,6 +22,7 @@ namespace Darts.Api.Cricket
         }
 
         [FunctionName("AddCricketPlayer")]
+        [UsedImplicitly]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "cricket/add-player")] HttpRequest req,
             ILogger log)

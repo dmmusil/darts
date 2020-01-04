@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Darts.Games.Migrations
 {
     [DbContext(typeof(GamesContext))]
-    [Migration("20200102145112_CricketTables")]
+    [Migration("20200104134416_CricketTables")]
     partial class CricketTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,7 +43,6 @@ namespace Darts.Games.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 

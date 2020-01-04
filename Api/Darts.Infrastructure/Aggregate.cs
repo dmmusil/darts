@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Darts.Infrastructure
 {
@@ -14,8 +13,8 @@ namespace Darts.Infrastructure
 
         protected void Apply(Event e)
         {
-            if (Loading) return;
             ApplyEvent(e);
+            if (Loading) return;
             _events.Add(e);
         }
         protected abstract void ApplyEvent(Event e);

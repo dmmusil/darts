@@ -22,7 +22,8 @@ namespace Darts.Games
         {
             if (Id == 0)
             {
-                Apply(new GameCreated(player));
+                Apply(new GameCreated());
+                Apply(new PlayerAdded(player));
             }
         }
 
@@ -48,8 +49,7 @@ namespace Darts.Games
         {
             switch(e)
             {
-                case GameCreated g:
-                    _calculator.AddPlayer(g.Player);
+                case GameCreated _:
                     State = new CricketState(Id);
                     break;
                 case PlayerAdded p: 
@@ -113,12 +113,6 @@ namespace Darts.Games
 
     public class GameCreated : Event
     {
-        public PlayerId Player { get; }
-
-        public GameCreated(PlayerId player)
-        {
-            Player = player;
-        }
     }
 
     public class TurnAdded : Event

@@ -95,7 +95,7 @@ namespace Darts.Games.Persistence
     public class Player
     {
         /// <summary>
-        /// A reference to a player from the Player context.
+        /// A (non-FK) reference to a player from the Player context.
         /// </summary>
         public Guid PlayerId { get; set; }
         public string Name { get; set; }

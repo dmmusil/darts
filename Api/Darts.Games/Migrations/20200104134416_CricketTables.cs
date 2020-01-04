@@ -25,7 +25,7 @@ namespace Darts.Games.Migrations
                 {
                     PlayerId = table.Column<Guid>(nullable: false),
                     GameId = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(maxLength: 100, nullable: false)
+                    Name = table.Column<string>(maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {

@@ -7,8 +7,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200102144644_CricketTables.cs" />
     <Compile Remove="Migrations\20200102144644_CricketTables.Designer.cs" />
-    <Compile Remove="Persistence\Migrations\20200101184618_AddCricketTables.cs" />
-    <Compile Remove="Persistence\Migrations\20200101184618_AddCricketTables.Designer.cs" />
+    <Compile Remove="Migrations\20200102145112_CricketTables.cs" />
+    <Compile Remove="Migrations\20200102145112_CricketTables.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,10 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Darts.Infrastructure\Darts.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 
 </Project>
