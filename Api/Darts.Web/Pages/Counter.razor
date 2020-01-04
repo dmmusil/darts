@@ -1,0 +1,122 @@
+﻿@page "/counter"
+@using Newtonsoft.Json
+@inject HttpClient Http
+
+<h1>Darticorny</h1>
+
+
+
+<div>
+    <label for="d1">Dart 1</label>
+    <input id="d1" type="number" @bind="Segment1" />
+    <label for="c1">Count</label>
+    <input id="c1" type="number" @bind="Count1" />
+</div>
+<div>
+    <label for="d2">Dart 2</label>
+    <input id="d2" type="number" @bind="Segment2" />
+    <label for="c2">Count</label>
+    <input id="c2" type="number" @bind="Count2" />
+</div>
+<div>
+    <label for="d3">Dart 3</label>
+    <input id="d3" type="number" @bind="Segment3" />
+    <label for="c3">Count</label>
+    <input id="c3" type="number" @bind="Count3" />
+</div>
+<button class="btn btn-primary" @onclick="SubmitScore">Submit</button>
+
+<h1>Scoreboard</h1>
+@if (Scores != null)
+{
+
+    @:<div><strong>20</strong> @GetCountOf(20)</div>
+    @:<div><strong>19</strong> @GetCountOf(19)</div>
+    @:<div><strong>18</strong> @GetCountOf(18)</div>
+    @:<div><strong>17</strong> @GetCountOf(17)</div>
+    @:<div><strong>16</strong> @GetCountOf(16)</div>
+    @:<div><strong>15</strong> @GetCountOf(15)</div>
+    @:<div><strong>B</strong> @GetCountOf(25)</div>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        Scores = await Http.GetJsonAsync<Turn[]>($"http://localhost:7071/api/cricket/{gameId}/score");
+    }
+
+    private Turn[] Scores { get; set; }
+
+    private int GetCountOf(int segment) =>
+        Scores
+            .SelectMany(t => t.Scores)
+            .Where(s => s.Segment == segment)
+            .Sum(s => s.Count);
+
+    private class Turn
+    {
+        public int Order { get; set; }
+        public Guid PlayerId { get; set; }
+        public Score[] Scores { get; set; }
+    }
+
+    private class Score
+    {
+        public int Segment { get; set; }
+        public int Count { get; set; }
+    }
+
+    private int currentCount = 0;
+
+    private int Segment1 { get; set; }
+    private int Count1 { get; set; }
+    private int Segment2 { get; set; }
+    private int Count2 { get; set; }
+    private int Segment3 { get; set; }
+    private int Count3 { get; set; }
+
+    private const int gameId = 1;
+    private Guid playerId = Guid.Parse("70505078-3275-48E6-9D27-9F7F5357EE2D");
+
+    private async Task SubmitScore()
+    {
+        var turn = new TurnRequest
+        {
+            PlayerId = playerId,
+            Scores = new Dictionary<string, int>()
+        };
+        turn.AddScore(Segment1, Count1);
+        turn.AddScore(Segment2, Count2);
+        turn.AddScore(Segment3, Count3);
+
+        await Http.PostJsonAsync($"http://localhost:7071/api/cricket/{gameId}/turns", turn);
+        ResetInputs();
+        Scores = await Http.GetJsonAsync<Turn[]>($"http://localhost:7071/api/cricket/{gameId}/score");
+    }
+
+    private void ResetInputs()
+    {
+        Segment1 = Count1 = Segment2 = Count2 = Segment3 = Count3 = 0;
+    }
+
+    private class TurnRequest
+    {
+        public Guid PlayerId { get; set; }
+        public Dictionary<string, int> Scores { get; set; }
+
+        public void AddScore(in int segment, in int count)
+        {
+            if (segment == 0)
+                return;
+            var key = segment.ToString();
+            if (!Scores.ContainsKey(key))
+            {
+                Scores[key] = 0;
+            }
+            Scores[key] += count;
+        }
+    }
+
+
+
+}

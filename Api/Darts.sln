@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Darts.Players.Tests", "Dart
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Darts.Games.Tests", "Darts.Games.Tests\Darts.Games.Tests.csproj", "{33E55260-C2FE-40F1-9190-8EA1B308EF39}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Darts.Web", "Darts.Web\Darts.Web.csproj", "{A57CBA65-4184-40A3-AB2E-44FF43A8D1CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{33E55260-C2FE-40F1-9190-8EA1B308EF39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33E55260-C2FE-40F1-9190-8EA1B308EF39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33E55260-C2FE-40F1-9190-8EA1B308EF39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A57CBA65-4184-40A3-AB2E-44FF43A8D1CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A57CBA65-4184-40A3-AB2E-44FF43A8D1CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A57CBA65-4184-40A3-AB2E-44FF43A8D1CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A57CBA65-4184-40A3-AB2E-44FF43A8D1CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
