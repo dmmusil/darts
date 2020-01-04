@@ -1,5 +1,5 @@
-﻿@page "/counter"
-@using Newtonsoft.Json
+﻿@page  "/cricket"
+@page "/cricket/{gameId:int}"
 @inject HttpClient Http
 
 <h1>Darticorny</h1>
@@ -27,28 +27,77 @@
 <button class="btn btn-primary" @onclick="SubmitScore">Submit</button>
 
 <h1>Scoreboard</h1>
-@if (Scores != null)
+@if (Scores != null && CurrentGame != null)
 {
+    <div style="display: flex;">
+        <div style="padding: 0 10px">
+            <div><strong>Player</strong></div>
+            <div><strong>20</strong></div>
+            <div><strong>19</strong></div>
+            <div><strong>18</strong></div>
+            <div><strong>17</strong></div>
+            <div><strong>16</strong></div>
+            <div><strong>15</strong></div>
+            <div><strong>B </strong></div>
+        </div>
+        @foreach (var playerInfo in CurrentGame.PlayerInfo)
+        {
+            var player = playerInfo.PlayerId;
+            <div>
+                <div>@playerInfo.Name</div>
+                <div>@GetCountOf(20, @player)</div>
+                <div>@GetCountOf(19, @player)</div>
+                <div>@GetCountOf(18, @player)</div>
+                <div>@GetCountOf(17, @player)</div>
+                <div>@GetCountOf(16, @player)</div>
+                <div>@GetCountOf(15, @player)</div>
+                <div>@GetCountOf(25, @player)</div>
+            </div>
+        }
 
-    @:<div><strong>20</strong> @GetCountOf(20)</div>
-    @:<div><strong>19</strong> @GetCountOf(19)</div>
-    @:<div><strong>18</strong> @GetCountOf(18)</div>
-    @:<div><strong>17</strong> @GetCountOf(17)</div>
-    @:<div><strong>16</strong> @GetCountOf(16)</div>
-    @:<div><strong>15</strong> @GetCountOf(15)</div>
-    @:<div><strong>B</strong> @GetCountOf(25)</div>
+    </div>
 }
 
 @code {
     protected override async Task OnInitializedAsync()
     {
-        Scores = await Http.GetJsonAsync<Turn[]>($"http://localhost:7071/api/cricket/{gameId}/score");
+        if (GameId > 0)
+        {
+            var players = await Http.GetJsonAsync<GameResponse>($"http://localhost:7071/api/cricket/{GameId}");
+            CurrentGame = new Game(players.Players);
+            foreach (var player in CurrentGame.PlayerInfo)
+            {
+                player.Name = (await Http.GetJsonAsync<PlayerInfo>($"http://localhost:7071/api/users/{player.PlayerId}")).Name;
+            }
+            Scores = await Http.GetJsonAsync<Turn[]>($"http://localhost:7071/api/cricket/{GameId}/score");
+        }
     }
 
+    private class GameResponse
+    {
+        public Guid[] Players { get; set; }
+    }
+
+    private class PlayerInfo
+    {
+        public Guid PlayerId { get; set; }
+        public string Name { get; set; }
+    }
+
+    private class Game
+    {
+        public Game(Guid[] players)
+        {
+            PlayerInfo = players.Select(p => new PlayerInfo { PlayerId = p }).ToArray();
+        }
+        public PlayerInfo[] PlayerInfo { get; set; }
+    }
+    private Game CurrentGame { get; set; }
     private Turn[] Scores { get; set; }
 
-    private int GetCountOf(int segment) =>
+    private int GetCountOf(int segment, Guid player) =>
         Scores
+            .Where(t => t.PlayerId == player)
             .SelectMany(t => t.Scores)
             .Where(s => s.Segment == segment)
             .Sum(s => s.Count);
@@ -75,7 +124,8 @@
     private int Segment3 { get; set; }
     private int Count3 { get; set; }
 
-    private const int gameId = 1;
+    [Parameter]
+    public int GameId { get; set; }
     private Guid playerId = Guid.Parse("70505078-3275-48E6-9D27-9F7F5357EE2D");
 
     private async Task SubmitScore()
@@ -89,9 +139,9 @@
         turn.AddScore(Segment2, Count2);
         turn.AddScore(Segment3, Count3);
 
-        await Http.PostJsonAsync($"http://localhost:7071/api/cricket/{gameId}/turns", turn);
+        await Http.PostJsonAsync($"http://localhost:7071/api/cricket/{GameId}/turns", turn);
         ResetInputs();
-        Scores = await Http.GetJsonAsync<Turn[]>($"http://localhost:7071/api/cricket/{gameId}/score");
+        Scores = await Http.GetJsonAsync<Turn[]>($"http://localhost:7071/api/cricket/{GameId}/score");
     }
 
     private void ResetInputs()
@@ -116,7 +166,4 @@
             Scores[key] += count;
         }
     }
-
-
-
 }
