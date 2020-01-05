@@ -9,14 +9,15 @@ namespace Darts.Games
     {
         public class Command : IRequest
         {
-            public Command(string newPlayer, int gameId)
+            public Command(string newPlayer)
             {
                 NewPlayer = newPlayer;
-                GameId = gameId;
             }
 
             public PlayerId NewPlayer { get; }
-            public int GameId { get; }
+            public int GameId { get; private set; }
+
+            public void ToGame(int gameId) => GameId = gameId;
         }
 
         public class Handler : IRequestHandler<Command>

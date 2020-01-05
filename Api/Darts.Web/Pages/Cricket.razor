@@ -1,10 +1,7 @@
-﻿@page  "/cricket"
-@page "/cricket/{gameId:int}"
+﻿@page "/cricket/{gameId:int}"
 @inject HttpClient Http
-
+@inject NavigationManager NavigationManager
 <h1>Darticorny</h1>
-
-
 
 <div>
     <label for="d1">Dart 1</label>
@@ -39,38 +36,46 @@
             <div><strong>16</strong></div>
             <div><strong>15</strong></div>
             <div><strong>B </strong></div>
+            <div><strong>Score</strong></div>
         </div>
-        @foreach (var playerInfo in CurrentGame.PlayerInfo)
+        @for (var i = 0; i < CurrentGame.PlayerInfo.Count; i++)
         {
+            var playerInfo = CurrentGame.PlayerInfo[i];
             var player = playerInfo.PlayerId;
-            <div>
-                <div>@playerInfo.Name</div>
-                <div>@GetCountOf(20, @player)</div>
-                <div>@GetCountOf(19, @player)</div>
-                <div>@GetCountOf(18, @player)</div>
-                <div>@GetCountOf(17, @player)</div>
-                <div>@GetCountOf(16, @player)</div>
-                <div>@GetCountOf(15, @player)</div>
-                <div>@GetCountOf(25, @player)</div>
-            </div>
+    <div>
+        @if (currentPlayerIndex == i)
+        {
+            <strong><u>@playerInfo.Name</u></strong>
+        }
+        else
+        {
+            <div>@playerInfo.Name</div>
+        }
+        <div>@GetCountOf(20, @player)</div>
+        <div>@GetCountOf(19, @player)</div>
+        <div>@GetCountOf(18, @player)</div>
+        <div>@GetCountOf(17, @player)</div>
+        <div>@GetCountOf(16, @player)</div>
+        <div>@GetCountOf(15, @player)</div>
+        <div>@GetCountOf(25, @player)</div>
+        <div>@GetScoreFor(@player)</div>
+    </div>
         }
 
     </div>
 }
 
+
 @code {
     protected override async Task OnInitializedAsync()
     {
-        if (GameId > 0)
+        var players = await Http.GetJsonAsync<GameResponse>($"http://localhost:7071/api/cricket/{GameId}");
+        CurrentGame = new Game(players.Players);
+        foreach (var player in CurrentGame.PlayerInfo)
         {
-            var players = await Http.GetJsonAsync<GameResponse>($"http://localhost:7071/api/cricket/{GameId}");
-            CurrentGame = new Game(players.Players);
-            foreach (var player in CurrentGame.PlayerInfo)
-            {
-                player.Name = (await Http.GetJsonAsync<PlayerInfo>($"http://localhost:7071/api/users/{player.PlayerId}")).Name;
-            }
-            Scores = await Http.GetJsonAsync<Turn[]>($"http://localhost:7071/api/cricket/{GameId}/score");
+            player.Name = (await Http.GetJsonAsync<PlayerInfo>($"http://localhost:7071/api/users/{player.PlayerId}")).Name;
         }
+        Scores = await Http.GetJsonAsync<Turn[]>($"http://localhost:7071/api/cricket/{GameId}/score");
     }
 
     private class GameResponse
@@ -86,21 +91,31 @@
 
     private class Game
     {
-        public Game(Guid[] players)
+        public Game(IEnumerable<Guid> players)
         {
-            PlayerInfo = players.Select(p => new PlayerInfo { PlayerId = p }).ToArray();
+            PlayerInfo = players.Select(p => new PlayerInfo { PlayerId = p }).ToList();
         }
-        public PlayerInfo[] PlayerInfo { get; set; }
+        public List<PlayerInfo> PlayerInfo { get; set; }
+        public void AddPlayer(PlayerInfo player) => PlayerInfo.Add(player);
+        public void RemovePlayer(PlayerInfo player) => PlayerInfo.Remove(PlayerInfo.Find(p => p.PlayerId == player.PlayerId));
     }
     private Game CurrentGame { get; set; }
     private Turn[] Scores { get; set; }
 
     private int GetCountOf(int segment, Guid player) =>
-        Scores
+        Math.Min(3, Scores
             .Where(t => t.PlayerId == player)
             .SelectMany(t => t.Scores)
             .Where(s => s.Segment == segment)
-            .Sum(s => s.Count);
+            .Sum(s => s.Count));
+
+    private int GetScoreFor(Guid player) =>
+        Scores
+            .Where(t => t.PlayerId == player)
+            .SelectMany(t => t.Scores)
+            .GroupBy(s => s.Segment)
+            .Select(g => new {g.Key, Count = g.Sum(s=>s.Count)})
+            .Sum(o => o.Count > 3 ? (o.Count - 3) * o.Key : 0);
 
     private class Turn
     {
@@ -115,7 +130,6 @@
         public int Count { get; set; }
     }
 
-    private int currentCount = 0;
 
     private int Segment1 { get; set; }
     private int Count1 { get; set; }
@@ -126,13 +140,14 @@
 
     [Parameter]
     public int GameId { get; set; }
-    private Guid playerId = Guid.Parse("70505078-3275-48E6-9D27-9F7F5357EE2D");
+
+    private int currentPlayerIndex = 0;
 
     private async Task SubmitScore()
     {
         var turn = new TurnRequest
         {
-            PlayerId = playerId,
+            PlayerId = CurrentGame.PlayerInfo[currentPlayerIndex].PlayerId,
             Scores = new Dictionary<string, int>()
         };
         turn.AddScore(Segment1, Count1);
@@ -141,8 +156,13 @@
 
         await Http.PostJsonAsync($"http://localhost:7071/api/cricket/{GameId}/turns", turn);
         ResetInputs();
+
+        currentPlayerIndex = (currentPlayerIndex + 1) % CurrentGame.PlayerInfo.Count;
+
         Scores = await Http.GetJsonAsync<Turn[]>($"http://localhost:7071/api/cricket/{GameId}/score");
     }
+
+
 
     private void ResetInputs()
     {

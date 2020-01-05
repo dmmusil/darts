@@ -18,12 +18,11 @@ namespace Darts.Games
             _calculator = new CricketScoreCalculator();
         }
 
-        public void Create(PlayerId player)
+        public void Create()
         {
             if (Id == 0)
             {
                 Apply(new GameCreated());
-                Apply(new PlayerAdded(player));
             }
         }
 

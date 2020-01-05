@@ -1,0 +1,63 @@
+@page  "/cricket/create"
+
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<div>New game - choose players</div>
+<div style="display:flex">
+    @if (Players != null)
+    {
+        <div>
+            <div>Available players</div>
+            @foreach (var player in Players.Except(NewGame.Players))
+            {
+                <div>@player.Name</div>
+                <button @onclick="()=>NewGame.AddPlayer(player)">-&gt;</button>
+            }
+        </div>
+        <div>
+            <div>Selected players</div>
+            @foreach (var player in NewGame.Players)
+            {
+                <div>@player.Name</div>
+                <button @onclick="()=>NewGame.RemovePlayer(player)">&lt;-</button>
+            }
+        </div>
+    }
+</div>
+@if (NewGame?.Players?.Count != 0)
+{
+    <button @onclick="CreateGame">Create</button>
+}
+
+@code
+{
+    private PlayerInfo[] Players { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        Players = await Http.GetJsonAsync<PlayerInfo[]>("http://localhost:7071/api/users");
+    }
+
+    private Game NewGame { get; set; } = new Game();
+    private class Game
+    {
+        public List<PlayerInfo> Players { get; } = new List<PlayerInfo>();
+        public void AddPlayer(PlayerInfo player) => Players.Add(player);
+        public void RemovePlayer(PlayerInfo player) => Players.Remove(Players.Find(p => p.PlayerId == player.PlayerId));
+    }
+    private class PlayerInfo
+    {
+        public Guid PlayerId { get; set; }
+        public string Name { get; set; }
+    }
+
+    private async Task CreateGame()
+    {
+        var response = await Http.PostJsonAsync<int>($"http://localhost:7071/api/cricket", new { });
+        foreach (var playerInfo in NewGame.Players)
+        {
+            await Http.PostJsonAsync($"http://localhost:7071/api/cricket/{response}/players", new { NewPlayer = playerInfo.PlayerId.ToString() });
+        }
+        NavigationManager.NavigateTo($"/cricket/{response}");
+    }
+}

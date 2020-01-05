@@ -24,7 +24,7 @@ namespace Darts.Api.Users
         [FunctionName("GetPlayerInfo")]
         [UsedImplicitly]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get",Route=
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route =
                 "users/{id:guid}")]
             HttpRequestMessage req,
             Guid id
