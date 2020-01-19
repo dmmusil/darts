@@ -17,7 +17,7 @@ namespace Darts.Games
             public PlayerId NewPlayer { get; }
             public int GameId { get; private set; }
 
-            public void ToGame(int gameId) => GameId = gameId;
+            public void ForGame(int gameId) => GameId = gameId;
         }
 
         public class Handler : IRequestHandler<Command>

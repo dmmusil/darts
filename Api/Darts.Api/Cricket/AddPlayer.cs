@@ -24,12 +24,14 @@ namespace Darts.Api.Cricket
         [FunctionName("AddCricketPlayer")]
         [UsedImplicitly]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "cricket/{gameId}/players")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post",
+                Route = "cricket/{gameId}/players")]
+            HttpRequest req,
             int gameId,
             ILogger log)
         {
             var command = await req.ReadJsonBody<AddCricketPlayer.Command>();
-            command.ToGame(gameId);
+            command.ForGame(gameId);
 
             await Mediator.Send(command);
 
