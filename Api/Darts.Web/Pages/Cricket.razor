@@ -1,67 +1,74 @@
 ﻿@page "/cricket/{gameId:int}"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
-<h1>Darticorny</h1>
-
-<div>
-    <label for="d1">Dart 1</label>
-    <input id="d1" type="number" @bind="Segment1" />
-    <label for="c1">Count</label>
-    <input id="c1" type="number" @bind="Count1" />
-</div>
-<div>
-    <label for="d2">Dart 2</label>
-    <input id="d2" type="number" @bind="Segment2" />
-    <label for="c2">Count</label>
-    <input id="c2" type="number" @bind="Count2" />
-</div>
-<div>
-    <label for="d3">Dart 3</label>
-    <input id="d3" type="number" @bind="Segment3" />
-    <label for="c3">Count</label>
-    <input id="c3" type="number" @bind="Count3" />
-</div>
-<button class="btn btn-primary" @onclick="SubmitScore">Submit</button>
 
 <h1>Scoreboard</h1>
 @if (Scores != null && CurrentGame != null)
 {
-    <div style="display: flex;">
-        <div style="padding: 0 10px">
-            <div><strong>Player</strong></div>
-            <div><strong>20</strong></div>
-            <div><strong>19</strong></div>
-            <div><strong>18</strong></div>
-            <div><strong>17</strong></div>
-            <div><strong>16</strong></div>
-            <div><strong>15</strong></div>
-            <div><strong>B </strong></div>
-            <div><strong>Score</strong></div>
-        </div>
-        @for (var i = 0; i < CurrentGame.PlayerInfo.Count; i++)
-        {
-            var playerInfo = CurrentGame.PlayerInfo[i];
-            var player = playerInfo.PlayerId;
-    <div>
-        @if (currentPlayerIndex == i)
-        {
-            <strong><u>@playerInfo.Name</u></strong>
-        }
-        else
-        {
-            <div>@playerInfo.Name</div>
-        }
-        <div>@GetCountOf(20, @player)</div>
-        <div>@GetCountOf(19, @player)</div>
-        <div>@GetCountOf(18, @player)</div>
-        <div>@GetCountOf(17, @player)</div>
-        <div>@GetCountOf(16, @player)</div>
-        <div>@GetCountOf(15, @player)</div>
-        <div>@GetCountOf(25, @player)</div>
-        <div>@GetScoreFor(@player)</div>
-    </div>
-        }
 
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col"><strong>Player</strong></div>
+                @for (var i = 0; i < CurrentGame.PlayerInfo.Count; i++)
+                {
+                    var playerInfo = CurrentGame.PlayerInfo[i];
+                    <div class="col">
+                        @if (currentPlayerIndex == i)
+                        {
+                            <strong><u>@playerInfo.Name</u></strong>
+                        }
+                        else
+                        {
+                            <div>@playerInfo.Name</div>
+                        }
+                    </div>
+                }
+            </div>
+            @foreach (var segment in Segments)
+            {
+                <div class="row">
+                    <div class="col">
+                        <button disabled="@SegmentClosed(segment, currentPlayerIndex)"
+                                class="btn btn-outline-primary @(SegmentClosed(segment, currentPlayerIndex)?"disabled":"")"
+                                @onclick="()=>RecordMark(segment)">
+                            @segment
+                        </button>
+                    </div>
+                    @foreach (var player in CurrentGame.PlayerInfo)
+                    {
+                        <div class="col">@GetCountOf(@segment, player.PlayerId)</div>
+                    }
+                </div>
+            }
+            <div class="row">
+                <div class="col">Score</div>
+                @foreach (var player in CurrentGame.PlayerInfo)
+                {
+                    <div class="col">@GetScoreFor(player.PlayerId)</div>
+                }
+            </div>
+        </div>
+        <div class="col"></div>
+        <div class="col"></div>
+    </div>
+    <div>
+        @ActiveTurn.ToString()
+        @if (ActiveTurn.HasScores)
+        {
+            <button class="btn btn-danger" @onclick="()=>ActiveTurn.Reset()">Reset</button>
+        }
+        <button class="btn btn-primary" @onclick="SubmitScore">Submit</button>
+    </div>
+    @:Marks per turn
+    <div style="display: flex">
+        @foreach (var playerInfo in CurrentGame.PlayerInfo)
+        {
+            <div>
+                <div>@playerInfo.Name</div>
+                <div>@MarksPerTurn(playerInfo.PlayerId)</div>
+            </div>
+        }
     </div>
 }
 
@@ -96,6 +103,7 @@
             PlayerInfo = players.Select(p => new PlayerInfo { PlayerId = p }).ToList();
         }
         public List<PlayerInfo> PlayerInfo { get; set; }
+
         public void AddPlayer(PlayerInfo player) => PlayerInfo.Add(player);
         public void RemovePlayer(PlayerInfo player) => PlayerInfo.Remove(PlayerInfo.Find(p => p.PlayerId == player.PlayerId));
     }
@@ -114,8 +122,46 @@
             .Where(t => t.PlayerId == player)
             .SelectMany(t => t.Scores)
             .GroupBy(s => s.Segment)
-            .Select(g => new {g.Key, Count = g.Sum(s=>s.Count)})
+            .Select(g => new { g.Key, Count = g.Sum(s => s.Count) })
             .Sum(o => o.Count > 3 ? (o.Count - 3) * o.Key : 0);
+
+    private decimal MarksPerTurn(Guid player)
+    {
+        if (!Scores.Any(t => t.PlayerId == player))
+        {
+            return 0;
+        }
+
+        var turns = Scores
+            .Where(t => t.PlayerId == player);
+        var marks = turns
+            .SelectMany(t => t.Scores).Sum(t => t.Count);
+        return marks / (decimal)turns.Count();
+    }
+
+    private bool SegmentClosed(int segment, int playerIndex)
+    {
+        // a segment is closed when all players have 3 or more marks
+        var playerId = CurrentGame.PlayerInfo[playerIndex].PlayerId;
+       
+        var currentPlayerSegmentScore = Scores.Where(t => t.PlayerId == playerId)
+            .SelectMany(t => t.Scores)
+            .Where(s => s.Segment == segment)
+            .Sum(s => s.Count);
+
+        var currentPlayerClosed = currentPlayerSegmentScore + ActiveTurn.GetCountFor(segment) >= 3;
+        var otherPlayersHavePlayed = Scores.Any(t => t.PlayerId != playerId);
+        var allOthersClosed = Scores.Where(t => t.PlayerId != playerId)
+            .Select(t => new
+            {
+                t.PlayerId,
+                Marks = t.Scores.Where(s => s.Segment == segment)
+                .Sum(s => s.Count)
+            })
+            .GroupBy(p => p.PlayerId)
+            .All(g => g.Sum(p => p.Marks) >= 3);
+        return allOthersClosed && currentPlayerClosed && otherPlayersHavePlayed;
+    }
 
     private class Turn
     {
@@ -130,49 +176,34 @@
         public int Count { get; set; }
     }
 
-
-    private int Segment1 { get; set; }
-    private int Count1 { get; set; }
-    private int Segment2 { get; set; }
-    private int Count2 { get; set; }
-    private int Segment3 { get; set; }
-    private int Count3 { get; set; }
+    private int[] Segments = new[] { 20, 19, 18, 17, 16, 15, 25 };
 
     [Parameter]
     public int GameId { get; set; }
 
     private int currentPlayerIndex = 0;
 
-    private async Task SubmitScore()
+    private TurnRequest ActiveTurn = new TurnRequest();
+
+    private void RecordMark(int segment)
     {
-        var turn = new TurnRequest
-        {
-            PlayerId = CurrentGame.PlayerInfo[currentPlayerIndex].PlayerId,
-            Scores = new Dictionary<string, int>()
-        };
-        turn.AddScore(Segment1, Count1);
-        turn.AddScore(Segment2, Count2);
-        turn.AddScore(Segment3, Count3);
-
-        await Http.PostJsonAsync($"http://localhost:7071/api/cricket/{GameId}/turns", turn);
-        ResetInputs();
-
-        currentPlayerIndex = (currentPlayerIndex + 1) % CurrentGame.PlayerInfo.Count;
-
-        Scores = await Http.GetJsonAsync<Turn[]>($"http://localhost:7071/api/cricket/{GameId}/score");
+        ActiveTurn.PlayerId = CurrentGame.PlayerInfo[currentPlayerIndex].PlayerId;
+        ActiveTurn.AddScore(segment, 1);
     }
 
-
-
-    private void ResetInputs()
+    private async Task SubmitScore()
     {
-        Segment1 = Count1 = Segment2 = Count2 = Segment3 = Count3 = 0;
+        await Http.PostJsonAsync($"http://localhost:7071/api/cricket/{GameId}/turns", ActiveTurn);
+
+        currentPlayerIndex = (currentPlayerIndex + 1) % CurrentGame.PlayerInfo.Count;
+        ActiveTurn = new TurnRequest { PlayerId = CurrentGame.PlayerInfo[currentPlayerIndex].PlayerId };
+        Scores = await Http.GetJsonAsync<Turn[]>($"http://localhost:7071/api/cricket/{GameId}/score");
     }
 
     private class TurnRequest
     {
         public Guid PlayerId { get; set; }
-        public Dictionary<string, int> Scores { get; set; }
+        public Dictionary<string, int> Scores { get; } = new Dictionary<string, int>();
 
         public void AddScore(in int segment, in int count)
         {
@@ -184,6 +215,27 @@
                 Scores[key] = 0;
             }
             Scores[key] += count;
+        }
+
+        public void Reset() => Scores.Clear();
+        public bool HasScores => Scores.Any();
+        public int GetCountFor(int segment)
+        {
+            if (Scores.ContainsKey(segment.ToString()))
+            {
+                return Scores[segment.ToString()];
+            }
+            return 0;
+        }
+
+        public override string ToString()
+        {
+            var str = "";
+            foreach (var score in Scores)
+            {
+                str += $"{score.Key}x{score.Value}, ";
+            }
+            return str.TrimEnd(' ', ',');
         }
     }
 }

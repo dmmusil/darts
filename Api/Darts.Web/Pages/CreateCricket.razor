@@ -4,52 +4,55 @@
 @inject NavigationManager NavigationManager
 
 <div>New game - choose players</div>
-<div style="display:flex">
+<div class="row">
     @if (Players != null)
     {
-        <div>
+        <div class="col">
             <div>Available players</div>
             @foreach (var player in Players.Except(NewGame.Players))
             {
                 <div>@player.Name</div>
-                <button @onclick="()=>NewGame.AddPlayer(player)">-&gt;</button>
+                <button class="btn btn-primary" @onclick="()=>NewGame.AddPlayer(player)">&gt;</button>
             }
         </div>
-        <div>
+        <div class="col">
             <div>Selected players</div>
             @foreach (var player in NewGame.Players)
             {
                 <div>@player.Name</div>
-                <button @onclick="()=>NewGame.RemovePlayer(player)">&lt;-</button>
+                <button class="btn btn-primary" @onclick="()=>NewGame.RemovePlayer(player)">&lt;</button>
             }
         </div>
     }
 </div>
 @if (NewGame?.Players?.Count != 0)
 {
-    <button @onclick="CreateGame">Create</button>
+    <div class="mt-5">
+        <button class="btn btn-primary" @onclick="CreateGame">Create</button>
+    </div>
 }
 
 @code
 {
-    private PlayerInfo[] Players { get; set; }
     protected override async Task OnInitializedAsync()
     {
         Players = await Http.GetJsonAsync<PlayerInfo[]>("http://localhost:7071/api/users");
     }
 
-    private Game NewGame { get; set; } = new Game();
+    private class PlayerInfo
+    {
+        public Guid PlayerId { get; set; }
+        public string Name { get; set; }
+    }
+    private PlayerInfo[] Players { get; set; }
+
     private class Game
     {
         public List<PlayerInfo> Players { get; } = new List<PlayerInfo>();
         public void AddPlayer(PlayerInfo player) => Players.Add(player);
         public void RemovePlayer(PlayerInfo player) => Players.Remove(Players.Find(p => p.PlayerId == player.PlayerId));
     }
-    private class PlayerInfo
-    {
-        public Guid PlayerId { get; set; }
-        public string Name { get; set; }
-    }
+    private Game NewGame { get; set; } = new Game();
 
     private async Task CreateGame()
     {
