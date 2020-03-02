@@ -26,7 +26,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Darts.Games.Tests", "Darts.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Darts.Web", "Darts.Web\Darts.Web.csproj", "{A57CBA65-4184-40A3-AB2E-44FF43A8D1CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Darts.Api.Watcher", "Darts.Api.Watcher\Darts.Api.Watcher.csproj", "{9B73A239-2420-47C8-9086-D1BF4F0321DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Darts.Api.Watcher", "Darts.Api.Watcher\Darts.Api.Watcher.csproj", "{9B73A239-2420-47C8-9086-D1BF4F0321DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
