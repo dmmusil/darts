@@ -44,12 +44,20 @@ resource "azurerm_sql_server" "darts_sql_server" {
   version                      = "12.0"
 }
 
-resource "azurerm_sql_database" "darts-db" {
+resource "azurerm_sql_database" "darts_db" {
   name                             = "darts-db"
   location                         = azurerm_resource_group.darts_rg.location
   server_name                      = azurerm_sql_server.darts_sql_server.name
   resource_group_name              = azurerm_resource_group.darts_rg.name
   edition                          = "GeneralPurpose"
   requested_service_objective_name = "GP_S_Gen5_1"
+}
+
+resource "azurerm_sql_firewall_rule" "allow_azure" {
+  name                = "allow-azure-services"
+  resource_group_name = azurerm_resource_group.darts_rg.name
+  server_name         = azurerm_sql_server.darts_sql_server.name
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "0.0.0.0"
 }
 
